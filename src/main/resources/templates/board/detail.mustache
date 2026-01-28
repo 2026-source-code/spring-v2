@@ -5,7 +5,10 @@
     <!-- 수정삭제버튼 -->
     <div class="d-flex justify-content-end">
         <a href="/boards/{{model.id}}/update-form" class="btn btn-secondary me-1">수정</a>
-        <button class="btn btn-outline-secondary">삭제</button>
+        <form action="/boards/{{model.id}}/delete" method="post">
+            <button class="btn btn-outline-secondary">삭제</button>
+        </form>
+        
     </div>
 
     <!-- 게시글내용 -->

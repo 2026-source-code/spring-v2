@@ -1,11 +1,15 @@
 package com.example.boardv1.board;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,10 +19,20 @@ import lombok.RequiredArgsConstructor;
 public class BoardController {
 
     private final BoardService boardService;
+    private final BoardRepository boardRepository;
+
+    // body : title=title7&content=content7 (x-www-form)
+    @PostMapping("/boards/save")
+    public String save(BoardSaveDTO reqDTO) throws IOException {
+        boardService.게시글쓰기(reqDTO.getTitle(), reqDTO.getContent());
+        return "redirect:/";
+    }
 
     // body : title=하하하&content=호호호호
     @PostMapping("/boards/{id}/update")
-    public String update(@PathVariable("id") int id, String title, String content) {
+    public String update(@PathVariable("id") int id, @RequestParam("title") String title,
+            @RequestParam("content") String content) {
+
         boardService.게시글수정(id, title, content);
         return "redirect:/boards/" + id;
     }
@@ -42,10 +56,19 @@ public class BoardController {
         return "board/update-form";
     }
 
+    // /boards?content=사과과
+    // select * from board_tb where content like '%사과%';
+
     @GetMapping("/boards/{id}")
     public String detail(@PathVariable("id") int id, HttpServletRequest req) {
         Board board = boardService.상세보기(id);
         req.setAttribute("model", board);
         return "board/detail";
+    }
+
+    @PostMapping("/boards/{id}/delete")
+    public String delete(@PathVariable("id") int id) {
+        boardService.게시글삭제(id);
+        return "redirect:/";
     }
 }

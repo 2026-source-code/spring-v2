@@ -29,7 +29,7 @@ public class BoardRepository {
     }
 
     public List<Board> findAll() {
-        Query query = em.createQuery("select b from Board b", Board.class);
+        Query query = em.createQuery("select b from Board b order by b.id desc", Board.class);
         List<Board> list = query.getResultList();
         return list;
     }

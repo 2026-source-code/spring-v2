@@ -11,20 +11,13 @@
       </tr>
     </thead>
     <tbody>
-      {{#models}}
-      <tr>
-        <td>{{id}}</td>
-        <td>
-          <a href="/boards/{{id}}" style="color: inherit; text-decoration: none;">            
-            {{title}}
-          </a>  
-        </td>
+    {{#models}} 
+      <tr onclick="location.href='/boards/{{id}}'" style="cursor: pointer;">
+        <td>{{id}}</td> 
+        <td>{{title}}</td>
         <td>{{content}}</td>
       </tr>
-      {{/models}}  
-
-     
-      
+    {{/models}}
     </tbody>
   </table>
 </div>
