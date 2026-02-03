@@ -1,5 +1,6 @@
 package com.example.boardv1.user;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -14,7 +15,7 @@ public class UserRepositoryTest {
 
     @Test
     public void findById_test() {
-        int id = 5;
+        int id = 1;
 
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("해당 아이디로 유저를 찾을 수 없어요"));
@@ -32,9 +33,9 @@ public class UserRepositoryTest {
 
         // when
         User findUser = userRepository.save(user); // 영속화됨
-
         // eye
         System.out.println(findUser);
+
     }
 
     @Test
@@ -55,7 +56,7 @@ public class UserRepositoryTest {
     @Test
     public void findByUsername_test() {
         // given
-        String username = "good";
+        String username = "ssar";
 
         // when (ssar, 1234)
         User findUser = userRepository.findByUsername(username)
