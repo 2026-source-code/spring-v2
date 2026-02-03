@@ -27,7 +27,6 @@ public class BoardController {
     // body : title=하하하&content=호호호호
     @PostMapping("/boards/{id}/update")
     public String update(@PathVariable("id") int id, BoardRequest.SaveOrUpdateDTO reqDTO) {
-
         boardService.게시글수정(id, reqDTO.getTitle(), reqDTO.getContent());
         return "redirect:/boards/" + id;
     }
@@ -51,7 +50,7 @@ public class BoardController {
         return "board/update-form";
     }
 
-    // /boards?content=사과과
+    // /boards?content=사과
     // select * from board_tb where content like '%사과%';
 
     @GetMapping("/boards/{id}")
