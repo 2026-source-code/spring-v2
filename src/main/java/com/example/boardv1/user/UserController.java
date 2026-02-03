@@ -1,11 +1,9 @@
 package com.example.boardv1.user;
 
-import org.h2.engine.Session;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +21,7 @@ public class UserController {
         // HttpSession session = req.getSession();
         User sessionUser = userService.로그인(reqDTO.getUsername(), reqDTO.getPassword());
         session.setAttribute("sessionUser", sessionUser);
+
         // http Response header에 Set-Cookie: sessionKey 저장되서 응답됨.
 
         return "redirect:/";

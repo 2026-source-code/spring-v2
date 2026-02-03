@@ -35,7 +35,7 @@ public class BoardRepository {
 
     public List<Board> findAll() {
         return em.createQuery("select b from Board b order by b.id desc", Board.class)
-                .getResultStream().toList();
+                .getResultList();
     }
 
     public Board save(Board board) {
