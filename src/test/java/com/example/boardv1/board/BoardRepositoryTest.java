@@ -42,7 +42,8 @@ public class BoardRepositoryTest {
         int id = 1;
 
         // when
-        Board board = boardRepository.findById(id);
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
         // boardRepository.findById(1);
 
         // eye
@@ -63,19 +64,11 @@ public class BoardRepositoryTest {
     }
 
     @Test
-    public void findAllV2_test() {
-        // given
-
-        // when
-        boardRepository.findAllV2();
-
-        // eye
-    }
-
-    @Test
     public void delete_test() {
         // given
-        Board board = boardRepository.findById(1);
+        int id = 1;
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
 
         // when
         boardRepository.delete(board);
@@ -87,7 +80,9 @@ public class BoardRepositoryTest {
     @Test
     public void update_test() {
         // given
-        Board board = boardRepository.findById(1);
+        int id = 1;
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요요"));
 
         // when
         board.setTitle("title1-update");

@@ -18,13 +18,15 @@ public class BoardService {
     }
 
     public Board 상세보기(int id) {
-        return boardRepository.findById(id);
+        return boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
     }
 
     @Transactional // update, delete, insert 할때 붙이세요!!
     public void 게시글수정(int id, String title, String content) {
         //
-        Board board = boardRepository.findById(id);
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("수정할 게시글을 찾을 수 없어요"));
         board.setTitle(title);
         board.setContent(content);
     }
@@ -48,7 +50,9 @@ public class BoardService {
 
     @Transactional
     public void 게시글삭제(int id) {
-        Board board = boardRepository.findById(id); // 영속화
+        // 영속화
+        Board board = boardRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("삭제할 게시글을 찾을 수 없어요"));
         boardRepository.delete(board);
     } // 자동 flush
 
