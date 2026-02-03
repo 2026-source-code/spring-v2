@@ -4,10 +4,14 @@ import java.sql.Timestamp;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.example.boardv1.user.User;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,20 +21,21 @@ import lombok.NoArgsConstructor;
  */
 
 @NoArgsConstructor // 디폴트 생성자
-@Data // 게터, 세터, 투스트링
+@Data
 @Entity // 해당 어노테이션을 보고, 컴퍼넌트 스캔 후, 데이터베이스 테이블을 생성한다.
 @Table(name = "board_tb")
-public class Board {
+public class Board { // user 1, board N
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String title;
     private String content;
+
+    // private Integer userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user; // user_id = 1 (select * from user_tb where id = 1)
+
     @CreationTimestamp
     private Timestamp createdAt;
-
-    public void 게시글수정(String content) {
-        this.content = content;
-    }
 
 }

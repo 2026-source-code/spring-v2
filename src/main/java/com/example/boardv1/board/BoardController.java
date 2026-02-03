@@ -46,6 +46,7 @@ public class BoardController {
     @GetMapping("/boards/{id}/update-form")
     public String updateForm(@PathVariable("id") int id, HttpServletRequest req) {
         Board board = boardService.상세보기(id);
+
         req.setAttribute("model", board);
         return "board/update-form";
     }

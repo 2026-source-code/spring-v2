@@ -2,11 +2,9 @@ package com.example.boardv1.user;
 
 import java.util.Optional;
 
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties.Apiversion.Use;
 import org.springframework.stereotype.Repository;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Query;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

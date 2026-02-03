@@ -24,6 +24,17 @@ public class BoardRepository {
     // this.em = em;
     // }
 
+    public Optional<Board> findByIdJoinUser(int id){
+        Query query = em.createQuery("select b from Board b join fetch b.user u where b.id = :id", Board.class);
+        query.setParameter("id", id);
+        try {
+            Board board = (Board) query.getSingleResult();
+            return Optional.of(board);
+        } catch (Exception e) {
+            return Optional.ofNullable(null);
+        }
+    }
+
     public Optional<Board> findById(int id) {
         // select * from board_tb where id = 1;
         // ResultSet rs -> Board 객체 옮기기 (Object Mapping)

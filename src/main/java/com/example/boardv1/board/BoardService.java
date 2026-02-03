@@ -18,8 +18,10 @@ public class BoardService {
     }
 
     public Board 상세보기(int id) {
-        return boardRepository.findById(id)
+        Board board = boardRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("게시글을 찾을 수 없어요"));
+
+        return board;
     }
 
     @Transactional // update, delete, insert 할때 붙이세요!!
