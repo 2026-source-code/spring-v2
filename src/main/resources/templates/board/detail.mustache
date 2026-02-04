@@ -2,21 +2,22 @@
 
 <div class="container p-5">
 
+    {{#model.isOwner}}
     <!-- 수정삭제버튼 -->
     <div class="d-flex justify-content-end">
         <a href="/boards/{{model.id}}/update-form" class="btn btn-secondary me-1">수정</a>
         <form action="/boards/{{model.id}}/delete" method="post">
             <button class="btn btn-outline-secondary">삭제</button>
         </form>
-        
     </div>
+    {{/model.isOwner}}
 
     <!-- 게시글내용 -->
     <div>
         <h2><b>{{model.title}}</b></h2>
         <hr />
         <div class="d-flex justify-content-end">
-            작성자 : {{model.user.username}}
+            작성자 : {{model.username}}
         </div>
         <div class="m-4 p-2">
             {{model.content}}

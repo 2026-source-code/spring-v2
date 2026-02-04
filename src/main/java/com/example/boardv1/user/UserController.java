@@ -31,6 +31,7 @@ public class UserController {
     // 조회인데, 예외로 post 요청
     @PostMapping("/login")
     public String login(UserRequest.LoginDTO reqDTO, HttpServletResponse resp) {
+
         // HttpSession session = req.getSession();
         User sessionUser = userService.로그인(reqDTO.getUsername(), reqDTO.getPassword());
         session.setAttribute("sessionUser", sessionUser);

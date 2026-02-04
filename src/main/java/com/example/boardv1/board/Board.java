@@ -32,7 +32,7 @@ public class Board { // user 1, board N
     private String content;
 
     // private Integer userId;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private User user; // user_id = 1 (select * from user_tb where id = 1)
 
     @CreationTimestamp
