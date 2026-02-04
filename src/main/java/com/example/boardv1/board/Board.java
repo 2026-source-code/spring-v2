@@ -1,9 +1,12 @@
 package com.example.boardv1.board;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.example.boardv1.reply.Reply;
 import com.example.boardv1.user.User;
 
 import jakarta.persistence.Entity;
@@ -12,6 +15,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -34,6 +38,9 @@ public class Board { // user 1, board N
     // private Integer userId;
     @ManyToOne(fetch = FetchType.EAGER)
     private User user; // user_id = 1 (select * from user_tb where id = 1)
+
+    @OneToMany(mappedBy = "board", fetch = FetchType.EAGER)
+    private List<Reply> replies = new ArrayList<>();
 
     @CreationTimestamp
     private Timestamp createdAt;
