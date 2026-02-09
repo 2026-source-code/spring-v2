@@ -1,5 +1,8 @@
 # Chapter 09. 테스트 코드
 
+> **선수 조건**: 이 챕터를 시작하기 전에 Chapter 01~08을 모두 완료하세요.
+> 테스트 대상인 Repository, Entity, data.sql이 모두 준비되어 있어야 합니다.
+
 ---
 
 ## 9.1 테스트가 왜 필요한가요?
@@ -441,4 +444,6 @@ mindmap
             Given-When-Then
 ```
 
+> **다음 챕터**: [Chapter 10. GlobalExceptionHandler 심화](ch10-globalException.md) - 예외 처리의 부족한 부분을 분석하고 개선합니다!
+>
 > [목차로 돌아가기](README.md)

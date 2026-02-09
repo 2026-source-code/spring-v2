@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(copy \"c:\\\\workspace\\\\spring_lab\\\\boardv1\\\\book\\\\ch08-view.md\" \"c:\\\\workspace\\\\spring_lab\\\\boardv1\\\\book\\\\ch05-view.md\")",
+      "Bash(copy \"c:\\\\workspace\\\\spring_lab\\\\boardv1\\\\book\\\\ch04-user.md\" \"c:\\\\workspace\\\\spring_lab\\\\boardv1\\\\book\\\\ch06-user.md\")",
+      "Bash(copy \"c:\\\\workspace\\\\spring_lab\\\\boardv1\\\\book\\\\ch05-board-crud.md\" \"c:\\\\workspace\\\\spring_lab\\\\boardv1\\\\book\\\\ch07-board-crud.md\")",
+      "Bash(copy:*)"
+    ]
+  }
+}

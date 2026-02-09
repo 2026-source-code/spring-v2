@@ -1,4 +1,8 @@
-# GlobalExceptionHandler 튜토리얼
+# Chapter 10. GlobalExceptionHandler 심화
+
+> **[개선 챕터]** ch01~ch08에서 만든 기본 기능이 완성된 상태에서, 예외 처리의 부족한 부분을 분석하고 개선합니다.
+>
+> **선수 조건**: Chapter 01~09를 모두 완료하세요.
 
 > 이 프로젝트의 예외 처리 구조를 분석하고, 부족한 부분을 개선하는 가이드
 

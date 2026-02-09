@@ -1,8 +1,12 @@
-# Chapter 04. 회원가입과 로그인
+# Chapter 06. 회원가입과 로그인
+
+> **선수 조건**: 이 챕터를 시작하기 전에 다음 챕터를 완료하세요:
+> - [Chapter 04. 예외 처리 설계](ch04-exception.md) - `Exception400`, `Exception401` 클래스 사용
+> - [Chapter 05. 뷰(Mustache) 템플릿](ch05-view.md) - `header.mustache` 사용
 
 ---
 
-## 4.1 회원 기능 전체 흐름
+## 6.1 회원 기능 전체 흐름
 
 ```mermaid
 sequenceDiagram
@@ -41,7 +45,7 @@ sequenceDiagram
 
 ---
 
-## 4.2 DTO (Data Transfer Object) 만들기
+## 6.2 DTO (Data Transfer Object) 만들기
 
 ### 개념
 
@@ -100,7 +104,7 @@ graph TD
 
 ---
 
-## 4.3 UserService - 비즈니스 로직
+## 6.3 UserService - 비즈니스 로직
 
 ### 개념
 
@@ -212,7 +216,7 @@ flowchart TD
 
 ---
 
-## 4.4 UserController - 요청 처리
+## 6.4 UserController - 요청 처리
 
 ### 개념
 
@@ -296,7 +300,7 @@ public class UserController {
 
 ---
 
-## 4.5 세션(Session) 이해하기
+## 6.5 세션(Session) 이해하기
 
 ### 세션이란?
 
@@ -369,7 +373,7 @@ public String logout() {
 
 ---
 
-## 4.6 쿠키(Cookie) vs 세션(Session)
+## 6.6 쿠키(Cookie) vs 세션(Session)
 
 | 항목 | 쿠키 (Cookie) | 세션 (Session) |
 |------|--------------|----------------|
@@ -385,7 +389,7 @@ public String logout() {
 
 ---
 
-## 4.7 요청 데이터 바인딩
+## 6.7 요청 데이터 바인딩
 
 ### 폼 데이터가 DTO로 변환되는 과정
 
@@ -404,6 +408,122 @@ graph LR
 
 ---
 
+## 6.8 뷰 템플릿 만들기
+
+UserController가 반환하는 뷰 파일을 만듭니다. `header.mustache`는 ch05에서 이미 만들었으므로, 여기서는 회원 관련 폼만 만듭니다.
+
+### join-form.mustache - 회원가입 폼
+
+`src/main/resources/templates/user/join-form.mustache`
+
+```html
+{{> header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header"><b>회원가입 페이지</b></div>
+        <div class="card-body">
+            <form action="/join" method="post" enctype="application/x-www-form-urlencoded">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Enter username"
+                           name="username" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control" placeholder="Enter password"
+                           name="password" required>
+                </div>
+                <div class="mb-3">
+                    <input type="email" class="form-control" placeholder="Enter email"
+                           name="email" required>
+                </div>
+                <button class="btn btn-secondary form-control">회원가입</button>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+```
+
+> **name 속성이 핵심!** HTML의 `name`과 JoinDTO의 필드명이 같아야 자동 바인딩됩니다.
+>
+> ```
+> HTML: name="username" → 서버: reqDTO.getUsername()
+> HTML: name="password" → 서버: reqDTO.getPassword()
+> HTML: name="email"    → 서버: reqDTO.getEmail()
+> ```
+
+### login-form.mustache - 로그인 폼
+
+`src/main/resources/templates/user/login-form.mustache`
+
+```html
+{{> header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header"><b>로그인 페이지</b></div>
+        <div class="card-body">
+            <form action="/login" method="post" enctype="application/x-www-form-urlencoded">
+                <div class="mb-3">
+                    <input id="username" type="text" class="form-control"
+                           placeholder="Enter username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <input type="password" class="form-control"
+                           placeholder="Enter password" name="password" required>
+                </div>
+                <button class="btn btn-secondary form-control">로그인</button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    let username = document.cookie.split("=")[1];
+    let dom = document.querySelector("#username");
+    dom.value = username;
+</script>
+</body>
+</html>
+```
+
+> 로그인 후 쿠키에 저장된 `username`을 JavaScript로 읽어서, 다음 로그인 시 아이디를 자동 입력합니다!
+
+---
+
+## 실행 확인
+
+서버를 재시작하고 다음을 확인하세요:
+
+1. `http://localhost:8080/join-form` → 회원가입 폼이 보이는지
+2. 회원가입 (username: `test`, password: `1234`, email: `test@nate.com`)
+3. 회원가입 성공 후 로그인 페이지로 이동하는지
+4. `http://localhost:8080/login-form` → 로그인 폼이 보이는지
+5. 로그인 (username: `ssar`, password: `1234`) → 메인 페이지로 이동
+6. 네비게이션 바가 "글쓰기 | 로그아웃"으로 바뀌는지
+7. 로그아웃 → 네비게이션 바가 "회원가입 | 로그인"으로 돌아오는지
+
+> **메인 페이지(`/`)는 아직 비어있습니다!** 게시글 목록은 다음 챕터(ch07)에서 만듭니다.
+
+### 이 시점의 파일 구조
+
+```
+src/main/java/com/example/boardv1/user/
+├── User.java            ← ch02
+├── UserRepository.java  ← ch03
+├── UserRequest.java     ← 이번 챕터
+├── UserService.java     ← 이번 챕터
+└── UserController.java  ← 이번 챕터
+
+src/main/resources/templates/
+├── header.mustache           ← ch05
+└── user/
+    ├── join-form.mustache    ← 이번 챕터
+    └── login-form.mustache   ← 이번 챕터
+```
+
+---
+
 ## 핵심 정리
 
 - **DTO**: 데이터 전달용 객체 (엔티티를 직접 노출하지 않기 위해)
@@ -414,4 +534,4 @@ graph LR
 - **Cookie**: 브라우저에 간단한 정보를 저장 (아이디 기억 등)
 - 폼 데이터는 DTO의 필드명과 매핑되어 자동으로 바인딩됨
 
-> **다음 챕터**: [Chapter 05. 게시글 CRUD](ch05-board-crud.md) - 게시글의 작성, 조회, 수정, 삭제를 구현합니다!
+> **다음 챕터**: [Chapter 07. 게시글 CRUD](ch07-board-crud.md) - 게시글의 작성, 조회, 수정, 삭제를 구현합니다!

@@ -1,8 +1,13 @@
-# Chapter 05. 게시글 CRUD
+# Chapter 07. 게시글 CRUD
+
+> **선수 조건**: 이 챕터를 시작하기 전에 다음 챕터를 완료하세요:
+> - [Chapter 04. 예외 처리 설계](ch04-exception.md) - `Exception401`, `Exception403`, `Exception404` 사용
+> - [Chapter 05. 뷰(Mustache) 템플릿](ch05-view.md) - `header.mustache` 사용
+> - [Chapter 06. 회원가입과 로그인](ch06-user.md) - 세션(`sessionUser`) 사용
 
 ---
 
-## 5.1 CRUD란?
+## 7.1 CRUD란?
 
 > **정의**: 데이터의 4가지 기본 동작
 >
@@ -21,7 +26,7 @@
 
 ---
 
-## 5.2 게시글 기능 전체 흐름
+## 7.2 게시글 기능 전체 흐름
 
 ```mermaid
 graph TD
@@ -40,7 +45,7 @@ graph TD
 
 ---
 
-## 5.3 요청 DTO
+## 7.3 요청 DTO
 
 ### 실습 코드
 
@@ -65,7 +70,7 @@ public class BoardRequest {
 
 ---
 
-## 5.4 응답 DTO
+## 7.4 응답 DTO
 
 ### 실습 코드
 
@@ -73,10 +78,6 @@ public class BoardRequest {
 
 ```java
 package com.example.boardv1.board;
-
-import java.util.List;
-
-import com.example.boardv1.reply.ReplyResponse;
 
 import lombok.Data;
 
@@ -109,8 +110,6 @@ public class BoardResponse {
         // 연산해서 만들어야 되는것
         private boolean isOwner;
 
-        private List<ReplyResponse.DTO> replies;
-
         public DetailDTO(Board board, Integer sessionUserId) {
             this.id = board.getId();
             this.userId = board.getUser().getId();
@@ -118,13 +117,13 @@ public class BoardResponse {
             this.content = board.getContent();
             this.username = board.getUser().getUsername();
             this.isOwner = board.getUser().getId() == sessionUserId;
-            this.replies = board.getReplies().stream()
-                    .map(reply -> new ReplyResponse.DTO(reply, sessionUserId))
-                    .toList();
         }
     }
 }
 ```
+
+> **참고**: 다음 챕터(ch08)에서 댓글 기능을 구현할 때, DetailDTO에 `replies` 필드를 추가합니다.
+> 지금은 게시글 정보만 담는 간단한 버전으로 먼저 만듭니다!
 
 ### DetailDTO 구조 이해
 
@@ -143,9 +142,6 @@ graph TD
 
         C["연산 데이터"]
         C1["isOwner: 내 글인가?<br/>(수정/삭제 버튼 표시 여부)"]
-
-        R["댓글 목록"]
-        R1["replies: List&lt;ReplyResponse.DTO&gt;"]
     end
 ```
 
@@ -159,7 +155,7 @@ graph TD
 
 ---
 
-## 5.5 BoardService - 비즈니스 로직
+## 7.5 BoardService - 비즈니스 로직
 
 ### 실습 코드
 
@@ -318,7 +314,7 @@ flowchart TD
 
 ---
 
-## 5.6 BoardController - 요청 처리
+## 7.6 BoardController - 요청 처리
 
 ### 실습 코드
 
@@ -491,7 +487,7 @@ public @ResponseBody BoardResponse.DetailDTO apiDetail(...) {
 
 ---
 
-## 5.7 인증과 권한 패턴
+## 7.7 인증과 권한 패턴
 
 이 프로젝트에서 반복적으로 사용되는 패턴:
 
@@ -517,6 +513,187 @@ if (sessionUserId != board.getUser().getId())
 
 ---
 
+## 7.8 뷰 템플릿 만들기
+
+BoardController가 반환하는 뷰 파일들을 만듭니다.
+
+### index.mustache - 게시글 목록 (메인 페이지)
+
+`src/main/resources/templates/index.mustache`
+
+```html
+{{> header}}
+
+<div class="container mt-3">
+
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th>번호</th>
+        <th>제목</th>
+        <th>내용</th>
+      </tr>
+    </thead>
+    <tbody>
+    {{#models}}
+      <tr onclick="location.href='/boards/{{id}}'" style="cursor: pointer;">
+        <td>{{id}}</td>
+        <td>{{title}}</td>
+        <td>{{content}}</td>
+      </tr>
+    {{/models}}
+    </tbody>
+  </table>
+</div>
+
+</body>
+</html>
+```
+
+> `{{#models}}...{{/models}}` 안의 내용이 게시글 리스트의 각 항목마다 반복됩니다!
+> `models`는 Controller에서 `req.setAttribute("models", list)`로 전달한 데이터입니다.
+
+### save-form.mustache - 게시글 작성 폼
+
+`src/main/resources/templates/board/save-form.mustache`
+
+```html
+{{> header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header"><b>게시글 작성</b></div>
+        <div class="card-body">
+            <form action="/boards/save" method="post" enctype="application/x-www-form-urlencoded">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Enter title" name="title">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" rows="5" name="content"></textarea>
+                </div>
+                <button class="btn btn-secondary form-control">글쓰기</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+```
+
+### update-form.mustache - 게시글 수정 폼
+
+`src/main/resources/templates/board/update-form.mustache`
+
+```html
+{{> header}}
+
+<div class="container p-5">
+    <div class="card">
+        <div class="card-header"><b>게시글 수정</b></div>
+        <div class="card-body">
+            <form action="/boards/{{model.id}}/update" method="post"
+                  enctype="application/x-www-form-urlencoded">
+                <div class="mb-3">
+                    <input type="text" class="form-control" placeholder="Enter title"
+                           name="title" value="{{model.title}}">
+                </div>
+                <div class="mb-3">
+                    <textarea class="form-control" rows="5"
+                              name="content">{{model.content}}</textarea>
+                </div>
+                <button class="btn btn-secondary form-control">글수정하기</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
+```
+
+> 수정 폼은 작성 폼과 거의 같지만, `value="{{model.title}}"`, `{{model.content}}`로 **기존 데이터가 미리 채워져** 있습니다!
+
+### detail.mustache - 게시글 상세
+
+`src/main/resources/templates/board/detail.mustache`
+
+```html
+{{> header}}
+
+<div class="container p-5">
+
+    {{#model.isOwner}}
+    <!-- 수정삭제버튼 (본인 글일때만 보임) -->
+    <div class="d-flex justify-content-end">
+        <a href="/boards/{{model.id}}/update-form" class="btn btn-secondary me-1">수정</a>
+        <form action="/boards/{{model.id}}/delete" method="post">
+            <button class="btn btn-outline-secondary">삭제</button>
+        </form>
+    </div>
+    {{/model.isOwner}}
+
+    <!-- 게시글내용 -->
+    <div>
+        <h2><b>{{model.title}}</b></h2>
+        <hr />
+        <div class="d-flex justify-content-end">
+            작성자 : {{model.username}}
+        </div>
+        <div class="m-4 p-2">
+            {{model.content}}
+        </div>
+    </div>
+
+    <!-- 댓글 영역은 Ch08에서 추가합니다 -->
+</div>
+
+</body>
+</html>
+```
+
+> **참고**: 댓글 등록 폼과 댓글 목록은 다음 챕터(ch08)에서 이 파일에 추가합니다!
+
+---
+
+## 실행 확인
+
+서버를 재시작하고 다음을 확인하세요:
+
+1. `http://localhost:8080` → 게시글 목록(6개)이 표시되는지
+2. 게시글 행 클릭 → 상세 페이지로 이동하는지
+3. 로그인(`ssar` / `1234`) → 네비게이션에 "글쓰기" 버튼이 보이는지
+4. 글쓰기 → 제목/내용 입력 후 저장 → 목록에 새 글이 보이는지
+5. 본인 글 상세 → 수정/삭제 버튼이 보이는지
+6. 수정 → 기존 데이터가 채워져 있고, 수정 후 반영되는지
+7. 삭제 → 게시글이 목록에서 사라지는지
+8. 다른 사람 글(`cos`의 글) 상세 → 수정/삭제 버튼이 안 보이는지
+
+### 이 시점의 파일 구조
+
+```
+src/main/java/com/example/boardv1/board/
+├── Board.java            ← ch02
+├── BoardRepository.java  ← ch03
+├── BoardRequest.java     ← 이번 챕터
+├── BoardResponse.java    ← 이번 챕터
+├── BoardService.java     ← 이번 챕터
+└── BoardController.java  ← 이번 챕터
+
+src/main/resources/templates/
+├── header.mustache              ← ch05
+├── index.mustache               ← 이번 챕터
+├── user/
+│   ├── join-form.mustache       ← ch06
+│   └── login-form.mustache      ← ch06
+└── board/
+    ├── detail.mustache          ← 이번 챕터 (댓글 없는 버전)
+    ├── save-form.mustache       ← 이번 챕터
+    └── update-form.mustache     ← 이번 챕터
+```
+
+---
+
 ## 핵심 정리
 
 - **CRUD**: Create(생성), Read(조회), Update(수정), Delete(삭제)
@@ -527,4 +704,4 @@ if (sessionUserId != board.getUser().getId())
 - **권한**: 본인 글인지 확인 (Service에서)
 - 게시글 삭제 시 댓글의 FK를 먼저 null로 설정해야 함
 
-> **다음 챕터**: [Chapter 06. 댓글 기능](ch06-reply.md) - 게시글에 댓글을 달고 삭제하는 기능을 구현합니다!
+> **다음 챕터**: [Chapter 08. 댓글 기능](ch08-reply.md) - 게시글에 댓글을 달고 삭제하는 기능을 구현합니다!

@@ -1,8 +1,11 @@
-# Chapter 06. 댓글 기능
+# Chapter 08. 댓글 기능
+
+> **선수 조건**: 이 챕터를 시작하기 전에 다음 챕터를 완료하세요:
+> - [Chapter 07. 게시글 CRUD](ch07-board-crud.md) - Board, BoardResponse, detail.mustache 사용
 
 ---
 
-## 6.1 댓글 기능 전체 흐름
+## 8.1 댓글 기능 전체 흐름
 
 ```mermaid
 sequenceDiagram
@@ -37,7 +40,7 @@ sequenceDiagram
 
 ---
 
-## 6.2 응답 DTO
+## 8.2 응답 DTO
 
 ### 실습 코드
 
@@ -82,7 +85,97 @@ graph TD
 
 ---
 
-## 6.3 요청 DTO
+## 8.3 BoardResponse.DetailDTO 업그레이드
+
+ch07에서 만든 `BoardResponse.DetailDTO`에 **댓글 목록(replies)** 필드를 추가합니다!
+
+### 수정 전 (ch07 버전)
+
+```java
+@Data
+public static class DetailDTO {
+    private int id;
+    private int userId;
+    private String title;
+    private String content;
+    private String username;
+    private boolean isOwner;
+
+    public DetailDTO(Board board, Integer sessionUserId) {
+        this.id = board.getId();
+        this.userId = board.getUser().getId();
+        // ... (기존 코드)
+    }
+}
+```
+
+### 수정 후 (댓글 추가 버전)
+
+`src/main/java/com/example/boardv1/board/BoardResponse.java`를 다음과 같이 수정하세요:
+
+```java
+package com.example.boardv1.board;
+
+import java.util.List;
+
+import com.example.boardv1.reply.ReplyResponse;
+
+import lombok.Data;
+
+public class BoardResponse {
+
+    @Data
+    public static class DTO {
+        private int id;
+        private String title;
+        private String content;
+
+        public DTO(Board board) {
+            this.id = board.getId();
+            this.title = board.getTitle();
+            this.content = board.getContent();
+        }
+    }
+
+    @Data
+    public static class DetailDTO {
+        // 화면에 보이지 않는것
+        private int id;
+        private int userId;
+
+        // 화면에 보이는것
+        private String title;
+        private String content;
+        private String username;
+
+        // 연산해서 만들어야 되는것
+        private boolean isOwner;
+
+        private List<ReplyResponse.DTO> replies;  // ← 추가!
+
+        public DetailDTO(Board board, Integer sessionUserId) {
+            this.id = board.getId();
+            this.userId = board.getUser().getId();
+            this.title = board.getTitle();
+            this.content = board.getContent();
+            this.username = board.getUser().getUsername();
+            this.isOwner = board.getUser().getId() == sessionUserId;
+            this.replies = board.getReplies().stream()                    // ← 추가!
+                    .map(reply -> new ReplyResponse.DTO(reply, sessionUserId))  // ← 추가!
+                    .toList();                                            // ← 추가!
+        }
+    }
+}
+```
+
+> **핵심 변경**: `ReplyResponse.DTO`를 import하고, `replies` 필드를 추가했습니다.
+> Board 엔티티의 `getReplies()`로 댓글 목록을 가져와서, 각각을 `ReplyResponse.DTO`로 변환합니다.
+>
+> 이것이 실무에서 자주 하는 **기존 코드 업그레이드** 과정입니다!
+
+---
+
+## 8.4 요청 DTO
 
 ### 실습 코드
 
@@ -110,7 +203,7 @@ public class ReplyRequest {
 
 ---
 
-## 6.4 ReplyService - 비즈니스 로직
+## 8.5 ReplyService - 비즈니스 로직
 
 ### 실습 코드
 
@@ -221,7 +314,7 @@ flowchart TD
 
 ---
 
-## 6.5 ReplyController - 요청 처리
+## 8.6 ReplyController - 요청 처리
 
 ### 실습 코드
 
@@ -306,7 +399,7 @@ public class ReplyController {
 
 ---
 
-## 6.6 Board와 Reply의 관계 정리
+## 8.7 Board와 Reply의 관계 정리
 
 ```mermaid
 graph TD
@@ -336,6 +429,154 @@ graph TD
 
 ---
 
+## 8.8 detail.mustache 업그레이드 - 댓글 영역 추가
+
+ch07에서 만든 `detail.mustache`에 **댓글 등록 폼과 댓글 목록**을 추가합니다!
+
+`src/main/resources/templates/board/detail.mustache`를 다음과 같이 수정하세요:
+
+```html
+{{> header}}
+
+<div class="container p-5">
+
+    {{#model.isOwner}}
+    <!-- 수정삭제버튼 (본인 글일때만 보임) -->
+    <div class="d-flex justify-content-end">
+        <a href="/boards/{{model.id}}/update-form" class="btn btn-secondary me-1">수정</a>
+        <form action="/boards/{{model.id}}/delete" method="post">
+            <button class="btn btn-outline-secondary">삭제</button>
+        </form>
+    </div>
+    {{/model.isOwner}}
+
+    <!-- 게시글내용 -->
+    <div>
+        <h2><b>{{model.title}}</b></h2>
+        <hr />
+        <div class="d-flex justify-content-end">
+            작성자 : {{model.username}}
+        </div>
+        <div class="m-4 p-2">
+            {{model.content}}
+        </div>
+    </div>
+
+    <!-- ====== 여기부터 이번 챕터에서 추가하는 댓글 영역 ====== -->
+    <div class="card mt-3">
+        <!-- 댓글등록 -->
+        <div class="card-body">
+            <form action="/replies/save" method="post">
+                <input type="hidden" name="boardId" value="{{model.id}}" />
+                <textarea id="comment" class="form-control" rows="2" name="comment"></textarea>
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-secondary mt-1">댓글등록</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- 댓글목록 -->
+        <div class="card-footer">
+            <b>댓글리스트</b>
+        </div>
+        <div class="list-group">
+            {{#model.replies}}
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div class="d-flex">
+                        <div class="px-1 me-1 bg-secondary text-white rounded">
+                            {{replyUsername}}
+                        </div>
+                        <div>{{comment}}</div>
+                    </div>
+
+                    {{#isReplyOwner}}
+                    <form action="/replies/{{id}}/delete?boardId={{model.id}}" method="post">
+                        <button class="btn">🗑</button>
+                    </form>
+                    {{/isReplyOwner}}
+                </div>
+            {{/model.replies}}
+        </div>
+    </div>
+</div>
+
+{{^sessionUser}}
+<script>
+    const textArea = document.querySelector('#comment');
+    textArea.addEventListener('click', function() {
+        alert('로그인하세요');
+        location.href = "/login-form";
+    });
+</script>
+{{/sessionUser}}
+</body>
+</html>
+```
+
+### 추가된 부분 해설
+
+**hidden input으로 boardId 전달**:
+```html
+<input type="hidden" name="boardId" value="{{model.id}}" />
+```
+> 댓글을 등록할 때 **어떤 게시글에 달 것인지** `boardId`를 함께 보냅니다. 사용자 눈에는 안 보이지만 서버로 전송됩니다.
+
+**댓글 목록 반복 렌더링**:
+```html
+{{#model.replies}}
+    {{replyUsername}}     ← ReplyResponse.DTO의 필드
+    {{comment}}           ← ReplyResponse.DTO의 필드
+    {{#isReplyOwner}}     ← 내 댓글이면 삭제 버튼 표시
+{{/model.replies}}
+```
+
+**비로그인 시 댓글 입력 방지**:
+```html
+{{^sessionUser}}
+<script>
+    textArea.addEventListener('click', function() {
+        alert('로그인하세요');
+        location.href = "/login-form";
+    });
+</script>
+{{/sessionUser}}
+```
+> 로그인하지 않은 사용자가 댓글란을 클릭하면 로그인 페이지로 보냅니다.
+
+---
+
+## 실행 확인
+
+서버를 재시작하고 다음을 확인하세요:
+
+1. 게시글 상세 페이지 → 댓글 등록 폼이 보이는지
+2. 로그인 후 댓글 입력 → 댓글이 등록되고 목록에 표시되는지
+3. 본인 댓글에만 삭제 버튼(🗑)이 보이는지
+4. 삭제 버튼 클릭 → 댓글이 삭제되는지
+5. 비로그인 상태에서 댓글란 클릭 → "로그인하세요" 알림이 뜨는지
+
+> **축하합니다!** 이 챕터까지 완료하면 **게시판의 모든 기본 기능이 완성**됩니다!
+
+### 이 시점의 파일 구조
+
+```
+src/main/java/com/example/boardv1/reply/
+├── Reply.java            ← ch02
+├── ReplyRepository.java  ← ch03
+├── ReplyResponse.java    ← 이번 챕터
+├── ReplyRequest.java     ← 이번 챕터
+├── ReplyService.java     ← 이번 챕터
+└── ReplyController.java  ← 이번 챕터
+
+src/main/java/com/example/boardv1/board/
+└── BoardResponse.java    ← 이번 챕터에서 업그레이드 (replies 필드 추가)
+
+src/main/resources/templates/board/
+└── detail.mustache       ← 이번 챕터에서 업그레이드 (댓글 영역 추가)
+```
+
+---
+
 ## 핵심 정리
 
 - **getReference()**: SELECT 없이 프록시 객체만 생성 (FK만 필요할 때 사용)
@@ -344,5 +585,6 @@ graph TD
 - `@PathVariable`: URL 경로에서 값 추출
 - `@RequestParam`: 쿼리 파라미터에서 값 추출
 - 삭제 후 `redirect`할 때 어떤 페이지로 돌아갈지 `boardId`가 필요
+- 기존 코드를 업그레이드하는 것이 실무의 일반적인 패턴
 
-> **다음 챕터**: [Chapter 07. 예외 처리](ch07-exception.md) - 에러가 발생했을 때 어떻게 처리하는지 배워봅시다!
+> **다음 챕터**: [Chapter 09. 테스트 코드](ch09-test.md) - Repository를 테스트하는 방법을 배워봅시다!

@@ -315,12 +315,16 @@ sequenceDiagram
 
 ---
 
-## 1.9 실행해보기
+## 1.9 실행 확인
 
 1. IDE에서 `Boardv1Application.java`의 `main` 메서드 실행
-2. 브라우저에서 `http://localhost:8080` 접속
-3. 게시글 목록이 보이면 성공!
-4. `http://localhost:8080/h2-console` 에서 DB 내용 확인 가능
+2. 콘솔에 `Started Boardv1Application` 메시지가 나오면 서버 시작 성공!
+3. 브라우저에서 `http://localhost:8080/h2-console` 접속
+4. JDBC URL을 `jdbc:h2:mem:test`로 입력하고 Connect 클릭
+5. 왼쪽 패널에 `USER_TB`, `BOARD_TB`, `REPLY_TB` 테이블이 보이면 `data.sql`이 정상 실행된 것!
+
+> **아직 화면은 없습니다!** `http://localhost:8080`에 접속하면 에러 페이지가 나옵니다.
+> Controller와 View를 아직 만들지 않았기 때문입니다. ch06부터 화면을 만듭니다.
 
 ---
 

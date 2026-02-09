@@ -1,10 +1,17 @@
-# Spring Boot 유효성 검사 (Jakarta Bean Validation)
+# Chapter 11. 유효성 검사 (Jakarta Bean Validation)
 
-> Spring Boot 4.x / Jakarta Validation 3.0 기준 (2026 최신)
+> **[개선 챕터]** ch01~ch08에서 만든 기본 기능에 유효성 검사를 추가합니다.
+> 빈 제목, 빈 내용 등 잘못된 입력을 서버에서 자동으로 거부하는 기능입니다.
+>
+> **선수 조건**: Chapter 01~10을 모두 완료하세요.
+
+> Spring Boot 4.x / Jakarta Validation 3.0 기준
 
 ## 1. 의존성 추가
 
-`build.gradle`에 한 줄 추가:
+> **중요!** 이 의존성이 `build.gradle`에 없으면 `@Valid`, `@NotBlank` 등이 동작하지 않습니다!
+
+`build.gradle`의 `dependencies` 블록에 한 줄 추가:
 
 ```gradle
 implementation 'org.springframework.boot:spring-boot-starter-validation'

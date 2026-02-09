@@ -1,6 +1,15 @@
-# Spring Boot 유효성 검사 v2 - AOP로 자동화
+# Chapter 12. 유효성 검사 v2 - AOP로 자동화
 
-> valid.md의 두 번째 버전. AOP를 적용해서 컨트롤러마다 반복되는 `errors.hasErrors()` 체크를 자동화한다.
+> **[개선 챕터]** Chapter 11에서 만든 유효성 검사의 반복 코드를 AOP로 자동화합니다.
+>
+> **선수 조건**: Chapter 11을 완료하세요.
+>
+> **의존성 추가 필요**: `build.gradle`에 다음을 추가하세요:
+> ```gradle
+> implementation 'org.springframework.boot:spring-boot-starter-aop'
+> ```
+
+> AOP를 적용해서 컨트롤러마다 반복되는 `errors.hasErrors()` 체크를 자동화한다.
 
 ---
 

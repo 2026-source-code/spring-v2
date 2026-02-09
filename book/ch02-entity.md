@@ -388,6 +388,20 @@ CREATE TABLE reply_tb (
 
 ---
 
+## 실행 확인
+
+1. 서버를 재시작합니다 (`Boardv1Application.java` → Run)
+2. 브라우저에서 `http://localhost:8080/h2-console` 접속
+3. 다음을 확인하세요:
+   - `USER_TB` 테이블 → `username`, `password`, `email` 컬럼이 있는지
+   - `BOARD_TB` 테이블 → `user_id` 컬럼(FK)이 있는지
+   - `REPLY_TB` 테이블 → `board_id`, `user_id` 컬럼(FK)이 있는지
+4. `SELECT * FROM USER_TB` 쿼리 실행 → data.sql의 데이터(ssar, cos)가 보이면 성공!
+
+> 콘솔에 `Hibernate: create table ...` 로그가 출력되면 JPA가 엔티티를 기반으로 테이블을 생성한 것입니다.
+
+---
+
 ## 핵심 정리
 
 - **엔티티(Entity)** = DB 테이블을 Java 클래스로 모델링한 것

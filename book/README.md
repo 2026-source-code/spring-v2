@@ -54,17 +54,39 @@ graph TB
 
 ## 목차
 
-| 챕터 | 제목 | 핵심 내용 |
-|------|------|----------|
-| [Chapter 01](ch01-project-setup.md) | 프로젝트 소개와 환경 설정 | Spring Boot, Gradle, H2, application.properties |
-| [Chapter 02](ch02-entity.md) | 엔티티(Entity) 설계 | User, Board, Reply 테이블 + 연관관계 매핑 |
-| [Chapter 03](ch03-repository.md) | Repository 계층 | EntityManager, JPQL, 영속성 컨텍스트 |
-| [Chapter 04](ch04-user.md) | 회원가입과 로그인 | UserService, UserController, HttpSession |
-| [Chapter 05](ch05-board-crud.md) | 게시글 CRUD | 목록, 상세, 작성, 수정, 삭제 |
-| [Chapter 06](ch06-reply.md) | 댓글 기능 | 댓글 등록, 삭제, getReference |
-| [Chapter 07](ch07-exception.md) | 예외 처리 | 커스텀 예외, GlobalExceptionHandler |
-| [Chapter 08](ch08-view.md) | 뷰(Mustache) 템플릿 | header, index, form, detail |
-| [Chapter 09](ch09-test.md) | 테스트 코드 | @DataJpaTest, Repository 테스트 |
+### Part 1. 기반 구조
+
+> 프로젝트의 토대를 만듭니다. Entity, Repository, 예외 처리, 뷰 템플릿 등 기능 구현에 필요한 구조를 먼저 갖춥니다.
+
+| 챕터 | 제목 | 핵심 내용 | 실행 확인 |
+|------|------|----------|----------|
+| [Chapter 01](ch01-project-setup.md) | 프로젝트 소개와 환경 설정 | Spring Boot, Gradle, H2, application.properties | H2 콘솔 확인 |
+| [Chapter 02](ch02-entity.md) | 엔티티(Entity) 설계 | User, Board, Reply 테이블 + 연관관계 매핑 | 테이블 생성 확인 |
+| [Chapter 03](ch03-repository.md) | Repository 계층 | EntityManager, JPQL, 영속성 컨텍스트 | 컴파일 확인 |
+| [Chapter 04](ch04-exception.md) | 예외 처리 설계 | 커스텀 예외, GlobalExceptionHandler | 컴파일 확인 |
+| [Chapter 05](ch05-view.md) | 뷰(Mustache) 템플릿 | Mustache 문법, header.mustache, Bootstrap | 컴파일 확인 |
+
+### Part 2. 기능 구현
+
+> 실제 동작하는 기능을 만듭니다. 각 챕터 끝에서 브라우저로 결과를 확인할 수 있습니다!
+
+| 챕터 | 제목 | 핵심 내용 | 실행 확인 |
+|------|------|----------|----------|
+| [Chapter 06](ch06-user.md) | 회원가입과 로그인 | UserService, UserController, HttpSession | 회원가입/로그인 테스트 |
+| [Chapter 07](ch07-board-crud.md) | 게시글 CRUD | 목록, 상세, 작성, 수정, 삭제 | 게시글 CRUD 테스트 |
+| [Chapter 08](ch08-reply.md) | 댓글 기능 | 댓글 등록, 삭제, getReference | **전체 기능 완성!** |
+
+### Part 3. 테스트와 개선
+
+> 완성된 프로젝트를 테스트하고, 유효성 검사 등 품질을 개선합니다.
+> ch11~12는 build.gradle에 새로운 의존성을 추가해야 합니다.
+
+| 챕터 | 제목 | 핵심 내용 | 비고 |
+|------|------|----------|------|
+| [Chapter 09](ch09-test.md) | 테스트 코드 | @DataJpaTest, Repository 테스트 | |
+| [Chapter 10](ch10-globalException.md) | GlobalExceptionHandler 심화 | 예외 처리 분석과 개선 | [개선] |
+| [Chapter 11](ch11-valid.md) | 유효성 검사 | @Valid, @NotBlank, @Size, @Email | [개선] 의존성 추가 필요 |
+| [Chapter 12](ch12-valid-aop.md) | 유효성 검사 AOP | ValidationAspect, AOP 자동화 | [개선] 의존성 추가 필요 |
 
 ---
 

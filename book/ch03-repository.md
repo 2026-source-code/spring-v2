@@ -378,6 +378,15 @@ public BoardRepository(EntityManager em) {
 
 ---
 
+## 실행 확인
+
+> 이 챕터에서는 Repository만 만들었고 Controller가 아직 없으므로, 화면에서 확인할 수 없습니다.
+> 서버를 실행해서 **컴파일 에러 없이 정상 시작**되는지만 확인하세요!
+>
+> Repository를 실제로 테스트하는 방법은 [Chapter 09. 테스트 코드](ch09-test.md)에서 배웁니다.
+
+---
+
 ## 핵심 정리
 
 - **Repository** = DB에 접근하는 계층 (DAO 역할)
@@ -391,4 +400,4 @@ public BoardRepository(EntityManager em) {
 - **Optional** = null 안전하게 처리
 - **DI** = Spring이 필요한 객체를 알아서 넣어줌
 
-> **다음 챕터**: [Chapter 04. 회원가입과 로그인](ch04-user.md) - 유저 기능을 만들어봅시다!
+> **다음 챕터**: [Chapter 04. 예외 처리 설계](ch04-exception.md) - 기능 구현 전에 예외 처리 구조를 먼저 만들어봅시다!
