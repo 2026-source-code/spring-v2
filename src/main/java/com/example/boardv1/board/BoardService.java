@@ -9,6 +9,7 @@ import com.example.boardv1._core.errors.ex.Exception403;
 import com.example.boardv1._core.errors.ex.Exception404;
 import com.example.boardv1._core.errors.ex.Exception500;
 import com.example.boardv1.reply.Reply;
+import com.example.boardv1.user.User;
 
 import lombok.RequiredArgsConstructor;
 
@@ -54,11 +55,12 @@ public class BoardService {
     // 원자성(모든게 다되면 commit, 하나라도 실패하면 rollback)
     // 트랜잭션 종료시 flush 됨.
     @Transactional
-    public void 게시글쓰기(String title, String content) {
+    public void 게시글쓰기(String title, String content, User sessionUser) {
         // 1. 비영속 객체
         Board board = new Board();
         board.setTitle(title);
         board.setContent(content);
+        board.setUser(sessionUser);
 
         System.out.println("before persist " + board.getId());
 

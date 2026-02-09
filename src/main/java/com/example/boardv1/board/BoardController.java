@@ -33,7 +33,7 @@ public class BoardController {
         if (sessionUser == null)
             throw new Exception401("인증되지 않았습니다.");
 
-        boardService.게시글쓰기(reqDTO.getTitle(), reqDTO.getContent());
+        boardService.게시글쓰기(reqDTO.getTitle(), reqDTO.getContent(), sessionUser);
         return "redirect:/";
     }
 
