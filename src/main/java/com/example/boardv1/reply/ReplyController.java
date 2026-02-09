@@ -22,8 +22,6 @@ public class ReplyController {
     public String delete(@PathVariable("id") int id, @RequestParam("boardId") int boardId) {
         // 인증 체크
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
 
         // 댓글 삭제
         replyService.댓글삭제(id, sessionUser.getId());
@@ -34,8 +32,6 @@ public class ReplyController {
     @PostMapping("/replies/save")
     public String save(ReplyRequest.SaveDTO reqDTO) {
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
 
         replyService.댓글등록(reqDTO.getBoardId(), reqDTO.getComment(), sessionUser.getId());
         return "redirect:/boards/" + reqDTO.getBoardId();

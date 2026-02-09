@@ -30,8 +30,6 @@ public class BoardController {
 
         // 인증(v).권한(x)
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
 
         boardService.게시글쓰기(reqDTO.getTitle(), reqDTO.getContent(), sessionUser);
         return "redirect:/";
@@ -43,8 +41,6 @@ public class BoardController {
 
         // 인증(v).권한(v)
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
 
         boardService.게시글수정(id, reqDTO.getTitle(), reqDTO.getContent(), sessionUser.getId());
         return "redirect:/boards/" + id;
@@ -61,10 +57,6 @@ public class BoardController {
     @GetMapping("/boards/save-form")
     public String saveForm() {
 
-        // 인증(v).권한(x)
-        User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
         return "board/save-form";
     }
 
@@ -72,8 +64,6 @@ public class BoardController {
     public String updateForm(@PathVariable("id") int id, HttpServletRequest req) {
         // 인증(v).권한(v)
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
         Board board = boardService.수정폼게시글정보(id, sessionUser.getId());
 
         req.setAttribute("model", board);
@@ -95,9 +85,6 @@ public class BoardController {
     public String delete(@PathVariable("id") int id) {
         // 인증(v).권한(v)
         User sessionUser = (User) session.getAttribute("sessionUser");
-        if (sessionUser == null)
-            throw new Exception401("인증되지 않았습니다.");
-
         try {
             boardService.게시글삭제(id, sessionUser.getId());
         } catch (Exception e) {
